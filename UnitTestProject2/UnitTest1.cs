@@ -50,8 +50,23 @@ namespace UnitTestProject2
             double Test;
 
             Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "2^4";
-            double otvet = Math.Pow(2, 4);
+            string stroka_test = "2^(4+3)-10*5-5--5/2";
+            double otvet = Math.Pow(2, 7)-10*5-5-(-5.0/2.0);
+
+            Test = Vspomogatelnii_method(stroka_test, parametri_test);
+
+            Assert.AreEqual(Test, otvet, "Ошибка");
+
+        }
+
+        [TestMethod]
+        public void TestMethod5()
+        {
+            double Test;
+
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
+            string stroka_test = "1+2+3+4";
+            double otvet = 1 + 2 + 3 + 4;
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
 
@@ -60,7 +75,36 @@ namespace UnitTestProject2
         }
 
 
-        
+        [TestMethod]
+        public void TestMethod6()
+        {
+            double Test;
+
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
+            string stroka_test = "1*2*3*4+4+5-1-4/2";
+            double otvet = 1 * 2 * 3 * 4 + 4 + 5 - 1 - 4 / 2;
+
+            Test = Vspomogatelnii_method(stroka_test, parametri_test);
+
+            Assert.AreEqual(Test, otvet, "Ошибка");
+
+        }
+
+        [TestMethod]
+        public void TestMethod7()
+        {
+            double Test;
+
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
+            string stroka_test = "(((4-1)-10--15)*(3,13*5*-2)/(2+10)-(5*10))/(12*3)+4";
+            double otvet = (((4 - 1) - 10- -15)*(3.13 * 5 * -2) / (2 + 10) - (5 * 10))/(12*3)+4;
+
+            Test = Vspomogatelnii_method(stroka_test, parametri_test);
+
+            Assert.AreEqual(Test, otvet, "Ошибка");
+
+        }
+
 
         public double Vspomogatelnii_method(string stroka_test, Dictionary<string, double> parametri_test)
         {

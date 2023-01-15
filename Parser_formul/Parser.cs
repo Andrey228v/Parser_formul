@@ -12,8 +12,8 @@ namespace Parser_formul
         List<string> list_operacii = new List<string>(); // Лист очереди операций
         List<string> list_preoriteta_operazii = new List<string>() { "log", "sqrt", "^", "/", "*", "+", "-" };
         List<string> list_vozmognih_chisel = new List<string>() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-        int otsechka_prohoda = 0; // Проход по строке
-
+        int otsechka_prohoda = -1; // Проход по строке
+        List<int> list_otsechek = new List<int>(); // для тестов
 
 
         public Parser()
@@ -37,7 +37,7 @@ namespace Parser_formul
             }
             rez = double.Parse(Razbienie_stroki(stroka));
             Console.WriteLine($"stroka 2: {stroka}");
-            Console.WriteLine(rez);
+            Console.WriteLine($"rez_finall: {rez}");
 
             return rez;
 
@@ -49,7 +49,12 @@ namespace Parser_formul
             stroka = Poisk_skobok_v_glubinu(stroka);
             Console.WriteLine($"stroka posle obrabotki: {stroka}");
 
-            // Тут надо прописать момент, если число одно осталось ... 
+            foreach(int ots in list_otsechek)
+            {
+                Console.WriteLine($"ots:{ots}");
+            }
+
+
             stroka = Razbienie_prosoi_stroki(stroka);
 
             return stroka;
@@ -57,60 +62,53 @@ namespace Parser_formul
 
 
         //Передаётся строка, ограниченная с двух сторон скобками
-        //Передаётся глубина погружения, чтобы для тестов можно было выплывать....
+
         private string Poisk_skobok_v_glubinu(string stroka)
         {
             int nachalo_prohoda = otsechka_prohoda;
             int konec_prohoda;
             string srez_stroki_so_skobkami; // Переменная среза со скобками
             string srez_stroki_bez_skobok; // Вопрос может срез может быть и без скобок... 
-
-            // Ставим +1 потому что надо смотреть от скобки, которая была найдена за шаг до предыдущей
-            // Вопрос корректно ли это... 
+            
+            // +1 ставится тут, потому что отсечка начинается с -1.
+            // -1 у отсечки потому-что мы хотим обозревать с 0, а не с 1.
             for (int i = nachalo_prohoda + 1; i < stroka.Length; i += 1)
             {
+                Console.WriteLine($"i:{i}");
 
-                // Заглушка
-                //if (stop_metka_dli_testov == true)
-                //{
-                //    Console.WriteLine($"Есть заход stroka{stroka}");
-                //    return stroka;
-                //}
-
-
+                otsechka_prohoda += 1;
                 string simvol = stroka[i].ToString();
-
                 // Разбиение по скобкам
                 if (simvol == "(")
                 {
-                    otsechka_prohoda += 1;
-                    
-                    
+                    list_otsechek.Add(otsechka_prohoda);
                     stroka = Poisk_skobok_v_glubinu(stroka);
-                    
+                    Console.WriteLine($"Обнулили");
+                    otsechka_prohoda = -1;
+                    //nachalo_prohoda = 1;
                 }
 
                 if (simvol == ")")
                 {
-                    
                     konec_prohoda = i;
                     Console.WriteLine($"nachalo_prohoda:{nachalo_prohoda}, konec_prohoda:{konec_prohoda}");
-                    //Вопрос верная ли формула Длина_Строки-Конец_прохода-1
-                    //Нет не верная, необходимо добавить вычитание начала отсчёта, потому что скобка может быть не в начале...
-                    Console.WriteLine($"Срез строки поиска скобок в глубину:{stroka.Substring(nachalo_prohoda, konec_prohoda - nachalo_prohoda + 1)}");
-
+   
                     //Задача- вычислить то что мы нашли в скобках в глубине
                     //Заменить ответом выражение в скобках ответом, который мы получили.
                     // Мы получаем простую строку, которую надо вычислить
-                    srez_stroki_so_skobkami = stroka.Substring(nachalo_prohoda, konec_prohoda - nachalo_prohoda + 1);
-                    srez_stroki_bez_skobok = stroka.Substring(nachalo_prohoda + 1, konec_prohoda - nachalo_prohoda + 1 - 2);
-                    // Тут надо тестировать что передавать со скобками или без
+                    srez_stroki_so_skobkami = stroka.Substring(nachalo_prohoda, konec_prohoda - nachalo_prohoda+1);
+                    srez_stroki_bez_skobok = stroka.Substring(nachalo_prohoda+1, konec_prohoda - nachalo_prohoda-1);
                     
-                    stroka = stroka.Replace(srez_stroki_so_skobkami, Razbienie_prosoi_stroki(srez_stroki_bez_skobok));
-                    Console.WriteLine($"TEST{stroka}");
-                    break;
+                    Console.WriteLine($"Срез строки поиска скобок в глубину:{srez_stroki_so_skobkami}");
 
+                    // Тут надо тестировать что передавать со скобками или без
+
+                    stroka = stroka.Replace(srez_stroki_so_skobkami, Razbienie_prosoi_stroki(srez_stroki_bez_skobok));
+                    Console.WriteLine($"TEST: {stroka}");
+                    //otsechka_prohoda = -1;
+                    break;
                 }
+
             }
             return stroka;
         }
@@ -130,13 +128,12 @@ namespace Parser_formul
             // [2, 2.1, 4, 5]
             // [+, +, /]
 
-            Console.WriteLine($"chast_stroki: {chast_stroki}");
+            Console.WriteLine($"Срез строки без скобок: {chast_stroki}");
 
             for(int i = 0; i < chast_stroki.Length; i += 1)
             {
 
                 string simvol = chast_stroki[i].ToString();
-                //Console.WriteLine($"simvol:{simvol}");
 
                 if (Poisk_simvola_v_spiske(list_vozmognih_chisel, simvol)) // числа
                 {
@@ -221,7 +218,7 @@ namespace Parser_formul
         // На вход передаётся часть строки, которая заключена в скобки
         private string Obrabotka_Prostogo_viragenia(List<string> list_chisel, List<string> list_operacii)
         {
-            string rez = "XXX";
+            string rez = "1";
 
             foreach (string ch in list_chisel)
             {
@@ -233,21 +230,35 @@ namespace Parser_formul
                 Console.WriteLine($"oper:{oper}");
             }
 
+            //[0, 1, 2 ,3, 4]
+            //[-, -, -, -]
             foreach( string operacia_pr in list_preoriteta_operazii)
             {
-                for(int i=0; i<list_operacii.Count; i+=1)
+                for(int i=0; i < list_operacii.Count; i+=1)
                 {
-                    if(operacia_pr == list_operacii[i])
+                    if (operacia_pr == list_operacii[i])
                     {
-                        rez = Prostoi_raschet(list_chisel[i], list_chisel[i+1], list_operacii[i]);
-                        list_chisel.RemoveAt(i+1);
+                        rez = Prostoi_raschet(list_chisel[i], list_chisel[i + 1], operacia_pr);
+                        list_chisel.RemoveAt(i + 1);
                         list_chisel.RemoveAt(i);
                         list_operacii.RemoveAt(i);
                         list_chisel.Insert(i, rez);
+                        i = -1;
                     }
                 }
 
+                // Вопрос как убрать это условие.... 
+                // Некрасиво с ним получается ... Думаю можно лучше тут сделать.
+                //if (list_operacii.Count == 1)
+                //{
+                //    rez = Prostoi_raschet(list_chisel[0], list_chisel[0 + 1], list_operacii[0]);
+                //    list_chisel.RemoveAt(0 + 1);
+                //    list_chisel.RemoveAt(0);
+                //    list_operacii.RemoveAt(0);
+                //    list_chisel.Insert(0, rez);
+                //}
             }
+
             list_chisel.Clear();
 
             return rez;
