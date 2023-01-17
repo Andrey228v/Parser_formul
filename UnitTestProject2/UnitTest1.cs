@@ -18,8 +18,8 @@ namespace UnitTestProject2
             double Test;
             
             Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "(-4+5,001)";
-            double otvet = -4 + 5.001;
+            string stroka_test = "(-4+5,001)^2";
+            double otvet = (-4 + 5.001)*(-4 + 5.001);
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
 
@@ -34,8 +34,8 @@ namespace UnitTestProject2
             double Test;
 
             Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "((-4+-5,001*-3)-10)-15";
-            double otvet = ((-4 + -5.001 * -3) - 10) - 15;
+            string stroka_test = "4+10*((-4+-5,001*-3)-10)-15";
+            double otvet = 4 + 10 * ((-4 + -5.001 * -3) - 10) - 15;
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
 
@@ -65,8 +65,8 @@ namespace UnitTestProject2
             double Test;
 
             Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "1+2+3+4";
-            double otvet = 1 + 2 + 3 + 4;
+            string stroka_test = "1+2+3+4+3,559+4,3912";
+            double otvet = 1 + 2 + 3 + 4 + 3.559 + 4.3912;
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
 
@@ -81,8 +81,8 @@ namespace UnitTestProject2
             double Test;
 
             Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "1*2*3*4+4+5-1-4/2";
-            double otvet = 1 * 2 * 3 * 4 + 4 + 5 - 1 - 4 / 2;
+            string stroka_test = "1*2*3*4+4+5-1-4/2*(4+(4+(4*(5+5))))";
+            double otvet = 1 * 2 * 3 * 4 + 4 + 5 - 1 - 4 / 2 * (4 + (4 + (4 * (5 + 5))));
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
 
@@ -104,6 +104,8 @@ namespace UnitTestProject2
             Assert.AreEqual(Test, otvet, "Ошибка");
 
         }
+
+
 
 
         public double Vspomogatelnii_method(string stroka_test, Dictionary<string, double> parametri_test)
