@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Parser_formul
@@ -10,6 +11,7 @@ namespace Parser_formul
         // Глобальные переменные, вопрос о рациональности... 
         List<string> list_chisel = new List<string>(); // Лист хранения чисел
         List<string> list_operacii = new List<string>(); // Лист очереди операций
+        List<string> list_operacii_nad_skobkami = new List<string>(); // Лист операций над скобками
         List<string> list_preoriteta_operazii = new List<string>() { "log", "sqrt", "^", "/", "*", "+", "-" };
         List<string> list_vozmognih_chisel = new List<string>() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
@@ -29,10 +31,7 @@ namespace Parser_formul
 
             double rez = 0.0;
             Console.WriteLine($"stroka: {stroka}");
-            foreach (var parametr in parametri)
-            {
-                Console.WriteLine($"parametr:{parametr}");
-            }
+
             rez = double.Parse(Razbienie_stroki(stroka));
             Console.WriteLine($"stroka 2: {stroka}");
             Console.WriteLine($"rez_finall: {rez}");
@@ -52,59 +51,126 @@ namespace Parser_formul
 
             return stroka;
         }
-
-
+        
+        //ацфафц
         //Передаётся строка, ограниченная с двух сторон скобками
+
+        private List<string> poisk_operacii_nad_skobkami_v_glubinu(string stroka, int ots = 0)
+        {
+            List<string> list_operacii_nad_skobkami = new List<string>();
+
+
+            int otsechka_prohoda = ots;
+
+            return list_operacii_nad_skobkami;
+
+        }
 
         private string Poisk_skobok_v_glubinu(string stroka, int ots = 0)
         {
             int otsechka_prohoda = ots; // Проход по строке
             int nachalo_prohoda = otsechka_prohoda;
-            int tochka_prohoda = otsechka_prohoda;
             int konec_prohoda;
             string srez_stroki_so_skobkami; // Переменная среза со скобками
             string srez_stroki_bez_skobok; // Вопрос может срез может быть и без скобок... 
-            
+            string operazia_nad_skobkami = "";
+            string rez_operazii_v_skobkah;
+            bool flag_skobok = false;
+
             // +1 ставится тут, потому что отсечка начинается с -1.
             // -1 у отсечки потому-что мы хотим обозревать с 0, а не с 1.
-            Console.WriteLine($"nachalo_prohoda:{nachalo_prohoda}," +
-                $" otsechka_prohoda:{otsechka_prohoda}, simvol:{stroka[nachalo_prohoda]}," +
-                $"stroka: {stroka}");
 
-            for (int i = tochka_prohoda; i < stroka.Length; i += 1)
+            for (int i = nachalo_prohoda; i < stroka.Length; i += 1)
             {
                 otsechka_prohoda += 1;
                 string simvol = stroka[i].ToString();
-                
+
+
                 // Разбиение по скобкам
                 if (simvol == "(")
                 {
+                    flag_skobok = true;
+                    
+                    list_operacii_nad_skobkami.Add(operazia_nad_skobkami);
+                    int Length_str_do_preobrazovania = stroka.Length;
+
+                    Console.WriteLine($"TEST: {stroka}, i:{i}, nachalo_prohoda:{nachalo_prohoda}, otsechka_prohoda:{otsechka_prohoda}");
                     stroka = Poisk_skobok_v_glubinu(stroka, otsechka_prohoda);
-                    Console.WriteLine($"otsechka_prohoda:{otsechka_prohoda}");
-                    Console.WriteLine($"Обнулили, nachalo_prohoda {nachalo_prohoda}"); 
+                    int Length_str_posle_preobrazovania = stroka.Length;
+
+                    Console.WriteLine($"TEST 2: {stroka}, i:{i}, nachalo_prohoda:{nachalo_prohoda}, otsechka_prohoda:{otsechka_prohoda}");
+
+                    Console.WriteLine("Выход");
+                    flag_skobok = false;
+                    operazia_nad_skobkami = "";
+                    //otsechka_prohoda -= 1;
+                    //nachalo_prohoda = Length_str_do_preobrazovania - Length_str_posle_preobrazovania;
+                    //i = 1; // Надо убирть  
+                    //nachalo_prohoda = 1; // Надо убирть 
+                    //otsechka_prohoda = 1; // Надо убирть 
+                    continue;
+                    
                 }
 
-                if (simvol == ")")
+                else if (simvol == ")")
                 {
                     konec_prohoda = i;
                     Console.WriteLine($"nachalo_prohoda:{nachalo_prohoda}, konec_prohoda:{konec_prohoda}");
-   
+
                     //Задача- вычислить то что мы нашли в скобках в глубине
                     //Заменить ответом выражение в скобках ответом, который мы получили.
                     // Мы получаем простую строку, которую надо вычислить
-                    srez_stroki_so_skobkami = stroka.Substring(nachalo_prohoda-1, konec_prohoda - nachalo_prohoda+2);
+                    srez_stroki_so_skobkami = stroka.Substring(nachalo_prohoda - 1, konec_prohoda - nachalo_prohoda + 2);
                     srez_stroki_bez_skobok = stroka.Substring(nachalo_prohoda, konec_prohoda - nachalo_prohoda);
-                    
+
                     Console.WriteLine($"Срез строки поиска скобок в глубину:{srez_stroki_so_skobkami}");
 
                     // Тут надо тестировать что передавать со скобками или без
+                    rez_operazii_v_skobkah = Razbienie_prosoi_stroki(srez_stroki_bez_skobok);
 
-                    stroka = stroka.Replace(srez_stroki_so_skobkami, Razbienie_prosoi_stroki(srez_stroki_bez_skobok));
-                    Console.WriteLine($"TEST: {stroka}");
-                    
+
+                    foreach (string oper in list_operacii_nad_skobkami)
+                    {
+                        Console.WriteLine($"oper: {oper}");
+                    }
+                    //rez_operazii_v_skobkah = Operacii_nad_skobkami(rez_operazii_v_skobkah, operazia_nad_skobkami);
+                    Console.WriteLine($"list_operacii_nad_skobkami.LastOrDefault(): {list_operacii_nad_skobkami.Last()}");
+
+                    if (list_operacii_nad_skobkami.Last() != "")
+                    {
+                        rez_operazii_v_skobkah = Operacii_nad_skobkami(rez_operazii_v_skobkah, list_operacii_nad_skobkami.Last());
+                        operazia_nad_skobkami = "";
+                    }
+
+                    stroka = stroka.Replace(srez_stroki_so_skobkami, rez_operazii_v_skobkah);
+                    list_operacii_nad_skobkami.Remove(list_operacii_nad_skobkami.Last());
+
+                    foreach (string oper in list_operacii_nad_skobkami)
+                    {
+                        Console.WriteLine($"oper 2: {oper}");
+                    }
+
+                    Console.WriteLine($"list_operacii_nad_skobkami.LastOrDefault() 2: {list_operacii_nad_skobkami.LastOrDefault()}");
+
+
                     break;
                 }
 
+
+                
+
+                else if (flag_skobok == false &
+                    Poisk_simvola_v_spiske(list_vozmognih_chisel, simvol) == false &
+                    Poisk_simvola_v_spiske(list_preoriteta_operazii, simvol) == false) 
+                {
+
+                    operazia_nad_skobkami += simvol;
+                    stroka = stroka.Remove(i, 1);
+                    otsechka_prohoda -= 1;
+                    i = i - 1;
+                }
+
+                Console.WriteLine($"stroka:{stroka}");
             }
             return stroka;
         }
@@ -152,12 +218,13 @@ namespace Parser_formul
                             chislo = chislo + simvol;
                         }
 
+
                         // Проверка на то, что если перед знаком минус стоит число, то это операция ...4-...
                         else if (Poisk_simvola_v_spiske(list_vozmognih_chisel, chast_stroki[i-1].ToString()))
                         {
                             list_chisel.Add(chislo);
                             chislo = "";
-
+                                            
                             operacia = operacia + simvol;
                             list_operacii.Add(operacia);
                             operacia = "";
@@ -279,6 +346,22 @@ namespace Parser_formul
             Console.WriteLine($"a:{a}, b:{b}, operacia:{operacia}, rez: {rez}");
 
 
+            return rez;
+        }
+
+        private string Operacii_nad_skobkami(string a, string operacia)
+        {
+            string rez = "";
+            Console.WriteLine($"Заход: {a}, {operacia}");
+
+            double a_d = double.Parse(a);
+
+            if (operacia == "sqrt")
+            {
+                rez = (Math.Sqrt(a_d)).ToString();
+            }
+
+            Console.WriteLine($"rez: {rez}");
             return rez;
         }
 
