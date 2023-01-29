@@ -106,6 +106,37 @@ namespace UnitTestProject2
         }
 
 
+        [TestMethod]
+        public void TestMethod8()
+        {
+            double Test;
+
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
+            string stroka_test = "sqrt(16+sqrt(5*5)+sqrt(4*4))";
+            double otvet = 5;
+
+            Test = Vspomogatelnii_method(stroka_test, parametri_test);
+
+            Assert.AreEqual(Test, otvet, "Ошибка");
+
+        }
+
+        [TestMethod]
+        public void TestMethod9()
+        {
+            double Test;
+
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
+            string stroka_test = "cos(90)+cos(0)";
+            double otvet = 1;
+
+            Test = Vspomogatelnii_method(stroka_test, parametri_test);
+
+            Assert.AreEqual(Test, otvet, "Ошибка");
+
+        }
+
+        
 
 
         public double Vspomogatelnii_method(string stroka_test, Dictionary<string, double> parametri_test)

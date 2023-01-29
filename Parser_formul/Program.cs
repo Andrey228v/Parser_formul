@@ -21,10 +21,10 @@ namespace Parser_formul
             ////Test_2
             //string stroka_2_test = "5+10*(((((-4.0--5.0+4.001))+111)*10)+5)+10+15*((10+15)+10)"; // ответ должен быть ....;
 
-            string stroka_2_test = "sqrt(16+sqrt(5*5)+sqrt(4*4))";
+            string stroka_2_test = "cos(90)+cos(0)";
             Dictionary<string, double> parametri_2_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
             Parser_1.Preobrazovanie_str_v_formulu(stroka_2_test, parametri_2_test);
-            double otvet = 5;
+            double otvet = 1;
             Console.WriteLine($"Ответ: {otvet}");
 
 

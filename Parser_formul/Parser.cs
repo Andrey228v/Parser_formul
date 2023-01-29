@@ -31,6 +31,12 @@ namespace Parser_formul
 
             double rez = 0.0;
             Console.WriteLine($"stroka: {stroka}");
+            Console.WriteLine(parametri.Keys);
+
+            foreach(string key in parametri.Keys)
+            {
+                Console.WriteLine($"key:{key}");
+            }
 
             rez = double.Parse(Razbienie_stroki(stroka));
             Console.WriteLine($"stroka 2: {stroka}");
@@ -55,17 +61,6 @@ namespace Parser_formul
         //ацфафц
         //Передаётся строка, ограниченная с двух сторон скобками
 
-        private List<string> poisk_operacii_nad_skobkami_v_glubinu(string stroka, int ots = 0)
-        {
-            List<string> list_operacii_nad_skobkami = new List<string>();
-
-
-            int otsechka_prohoda = ots;
-
-            return list_operacii_nad_skobkami;
-
-        }
-
         private string Poisk_skobok_v_glubinu(string stroka, int ots = 0)
         {
             int otsechka_prohoda = ots; // Проход по строке
@@ -89,27 +84,11 @@ namespace Parser_formul
                 // Разбиение по скобкам
                 if (simvol == "(")
                 {
-                    flag_skobok = true;
-                    
                     list_operacii_nad_skobkami.Add(operazia_nad_skobkami);
-                    int Length_str_do_preobrazovania = stroka.Length;
-
-                    Console.WriteLine($"TEST: {stroka}, i:{i}, nachalo_prohoda:{nachalo_prohoda}, otsechka_prohoda:{otsechka_prohoda}");
                     stroka = Poisk_skobok_v_glubinu(stroka, otsechka_prohoda);
-                    int Length_str_posle_preobrazovania = stroka.Length;
-
-                    Console.WriteLine($"TEST 2: {stroka}, i:{i}, nachalo_prohoda:{nachalo_prohoda}, otsechka_prohoda:{otsechka_prohoda}");
-
-                    Console.WriteLine("Выход");
                     flag_skobok = false;
-                    operazia_nad_skobkami = "";
-                    //otsechka_prohoda -= 1;
-                    //nachalo_prohoda = Length_str_do_preobrazovania - Length_str_posle_preobrazovania;
-                    //i = 1; // Надо убирть  
-                    //nachalo_prohoda = 1; // Надо убирть 
-                    //otsechka_prohoda = 1; // Надо убирть 
+                    operazia_nad_skobkami = "";                 
                     continue;
-                    
                 }
 
                 else if (simvol == ")")
@@ -125,7 +104,6 @@ namespace Parser_formul
 
                     Console.WriteLine($"Срез строки поиска скобок в глубину:{srez_stroki_so_skobkami}");
 
-                    // Тут надо тестировать что передавать со скобками или без
                     rez_operazii_v_skobkah = Razbienie_prosoi_stroki(srez_stroki_bez_skobok);
 
 
@@ -133,13 +111,13 @@ namespace Parser_formul
                     {
                         Console.WriteLine($"oper: {oper}");
                     }
-                    //rez_operazii_v_skobkah = Operacii_nad_skobkami(rez_operazii_v_skobkah, operazia_nad_skobkami);
+                    
                     Console.WriteLine($"list_operacii_nad_skobkami.LastOrDefault(): {list_operacii_nad_skobkami.Last()}");
 
                     if (list_operacii_nad_skobkami.Last() != "")
                     {
                         rez_operazii_v_skobkah = Operacii_nad_skobkami(rez_operazii_v_skobkah, list_operacii_nad_skobkami.Last());
-                        operazia_nad_skobkami = "";
+                        list_chisel.Clear();
                     }
 
                     stroka = stroka.Replace(srez_stroki_so_skobkami, rez_operazii_v_skobkah);
@@ -156,15 +134,15 @@ namespace Parser_formul
                     break;
                 }
 
-
-                
-
-                else if (flag_skobok == false &
+                else if (flag_skobok == false & 
                     Poisk_simvola_v_spiske(list_vozmognih_chisel, simvol) == false &
-                    Poisk_simvola_v_spiske(list_preoriteta_operazii, simvol) == false) 
+                    Poisk_simvola_v_spiske(list_preoriteta_operazii, simvol) == false &
+                    simvol != ",") 
                 {
 
                     operazia_nad_skobkami += simvol;
+                    // Из-за того что после удаления операции над скобками в строке отсечка прохода не перемещается,
+                    // её необходимо перемещать самому. Вопрос это можно ли сделать как-то более красиво ... 
                     stroka = stroka.Remove(i, 1);
                     otsechka_prohoda -= 1;
                     i = i - 1;
@@ -190,7 +168,7 @@ namespace Parser_formul
             // [2, 2.1, 4, 5]
             // [+, +, /]
 
-            Console.WriteLine($"Срез строки без скобок: {chast_stroki}");
+            Console.WriteLine($"Заход в разбиение простой строки");
 
             for(int i = 0; i < chast_stroki.Length; i += 1)
             {
@@ -361,6 +339,27 @@ namespace Parser_formul
                 rez = (Math.Sqrt(a_d)).ToString();
             }
 
+            if (operacia == "ln")
+            {
+                rez = (Math.Log10(a_d)).ToString();
+            }
+
+            if (operacia == "log")
+            {
+                rez = (Math.Log(a_d)).ToString();
+            }
+
+            if (operacia == "sin")
+            {
+                rez = (Math.Sin(a_d)).ToString();
+            }
+
+            if (operacia == "cos")
+            {
+                rez = Math.Round((Math.Cos(a_d*Math.PI/180))).ToString();
+                
+            }
+
             Console.WriteLine($"rez: {rez}");
             return rez;
         }
@@ -380,7 +379,45 @@ namespace Parser_formul
             return rez;
         }
 
+        private string Podstanovka_parametrov_v_stroku(string stroka, Dictionary<string, double> parametri)
+        {
 
+            foreach(var parametr in parametri)
+            {
+                string key = parametr.Key;
+                string parametr_v_stroke = "";
+                bool flag_ostanova = false;
+                //int nachalo_prohoda = 0;
+
+                // param1*10+param2*5
+
+                for (int i = 0; i < stroka.Length; i++)
+                {
+                    string simvol = stroka[i].ToString();
+
+
+                    if (flag_ostanova == false &
+                        Poisk_simvola_v_spiske(list_vozmognih_chisel, simvol) == false &
+                        Poisk_simvola_v_spiske(list_preoriteta_operazii, simvol) == false &
+                        simvol != ",")
+                    {
+
+                        parametr_v_stroke += simvol;      
+                    }
+
+                    if (parametr_v_stroke == key)
+                    {
+                        stroka = stroka.Replace();
+                        flag_ostanova = false;
+                    }
+
+
+                }
+
+            }
+
+            return stroka;
+        }
 
     }
 }
