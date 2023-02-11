@@ -17,8 +17,8 @@ namespace UnitTestProject2
         {
             double Test;
             
-            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "(-4+5,001)^2";
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", -4 }, { "b", 2 } };
+            string stroka_test = "(a+5,001)^b";
             double otvet = (-4 + 5.001)*(-4 + 5.001);
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
@@ -33,8 +33,8 @@ namespace UnitTestProject2
         {
             double Test;
 
-            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "4+10*((-4+-5,001*-3)-10)-15";
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a11", 4 }, { "a2", 10 } };
+            string stroka_test = "a11+a2*((-a11+-5,001*-3)-a2)-15";
             double otvet = 4 + 10 * ((-4 + -5.001 * -3) - 10) - 15;
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
@@ -49,8 +49,8 @@ namespace UnitTestProject2
         {
             double Test;
 
-            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "2^(4+3)-10*5-5--5/2";
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 2 }, { "b", 5 } };
+            string stroka_test = "a^(4+3)-10*b-b--b/a";
             double otvet = Math.Pow(2, 7)-10*5-5-(-5.0/2.0);
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
@@ -64,8 +64,8 @@ namespace UnitTestProject2
         {
             double Test;
 
-            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "1+2+3+4+3,559+4,3912";
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 3.559}, { "b", 4.3912 } };
+            string stroka_test = "1+2+3+4+a+b";
             double otvet = 1 + 2 + 3 + 4 + 3.559 + 4.3912;
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
