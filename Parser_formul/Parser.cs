@@ -316,10 +316,11 @@ namespace Parser_formul
 
             if (operacia == "cos")
             {
-                rez = Math.Round((Math.Cos(a_d*Math.PI/180))).ToString();
-                
-            }
+                //rez = Math.Round((Math.Cos(a_d*Math.PI/180))).ToString();
+                rez = (Math.Cos(a_d * Math.PI / 180)).ToString();
 
+            }
+            Console.WriteLine($"rez:{rez}");
             return rez;
         }
 

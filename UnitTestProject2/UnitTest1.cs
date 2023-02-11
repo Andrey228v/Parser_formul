@@ -10,8 +10,6 @@ namespace UnitTestProject2
     public class UnitTest1
     {
 
-       
-
         [TestMethod]
         public void TestMethod2()
         {
@@ -95,8 +93,8 @@ namespace UnitTestProject2
         {
             double Test;
 
-            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "(((4-1)-10--15)*(3,13*5*-2)/(2+10)-(5*10))/(12*3)+4";
+            Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a1", 10 }, { "b1", 4 } };
+            string stroka_test = "(((b1-1)-a1--15)*(3,13*5*-2)/(2+10)-(5*a1))/(12*3)+b1";
             double otvet = (((4 - 1) - 10- -15)*(3.13 * 5 * -2) / (2 + 10) - (5 * 10))/(12*3)+4;
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
@@ -127,16 +125,14 @@ namespace UnitTestProject2
             double Test;
 
             Dictionary<string, double> parametri_test = new Dictionary<string, double>() { { "a", 12.2 }, { "b", 12.4 } };
-            string stroka_test = "cos(90)+cos(0)";
-            double otvet = 1;
+            string stroka_test = "cos(cos(cos(90)))+cos(0)";
+            double otvet = 1.9998531180882773;
 
             Test = Vspomogatelnii_method(stroka_test, parametri_test);
 
             Assert.AreEqual(Test, otvet, "Ошибка");
 
         }
-
-        
 
 
         public double Vspomogatelnii_method(string stroka_test, Dictionary<string, double> parametri_test)
